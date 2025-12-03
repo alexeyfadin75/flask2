@@ -29,20 +29,8 @@ def delete_author(author_id):
         db.session.rollback()
         abort(503, f"Database error: {str(e)}")
 
-
-def check(data: dict, check_rating=False) -> tuple[bool, dict]:
-    keys = ('author', 'text')
-    if check_rating:
-        rating = data.get('rating')    
-        if rating and rating not in range(1, 6):
-            return False, {"error": "Rating must be between 1 and 5"}
-    
-    if set(data.keys()) - set(keys):
-        return False, {"error": "Invalid fields to create/update"}
-    return True, data
-
 @app.put("/authors/<int:author_id>")
-def edit_quote(author_id: int):
+def edit_authors(author_id: int):
     """ Изменение имени автора по id """
     new_data = request.json
     print(new_data)
