@@ -1,0 +1,15 @@
+*env/
+*env
+*.env
+.vscode/
+.idea/
+__pychare__/
+db.*
+*.py[cod]
+*.sqlite
+*.sqlite3
+*.tmp
+*.code-workspace
+ClassWork
+QuoteApi
+*.db
