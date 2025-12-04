@@ -8,7 +8,7 @@ class AuthorModel(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), index=True, unique=True)
-    surname: Mapped[str] = mapped_column(String(32), index=True, unique=True)
+    surname: Mapped[str] = mapped_column(String(32), index=True, server_default="NoSurname", unique=True)
     quotes: Mapped[list['QuoteModel']] = relationship(back_populates='author', lazy='dynamic')
 
     def __init__(self, name, surname):
