@@ -1,22 +1,26 @@
+from marshmallow import ValidationError, EXCLUDE
 from api import app, db
 from flask import request, abort, jsonify
 from api.models.author import AuthorModel
-from api.schemas.author import author_schema, authors_schema
+from api.schemas.author import author_schema, edit_author_schema
 
 @app.post("/authors")
 def create_author():
     #"Добавление авторов"
-    author_data = request.json
     # add_to_db(AuthorModel, author_data)  # Variant 2
     try:
-        author = AuthorModel(**author_data)
+        request_data = request.get_data()   # возвращает сырые данные
+        author_data = author_schema.loads(request_data) # для сырых данных  с loads
+        author = AuthorModel(**author_data) #Оператор ** (двойная звездочка) распаковывает словарь в именованные аргументы:
         db.session.add(author)
         db.session.commit()
-    except TypeError:
-        abort(400, f"Invalid data. Required: <name>. Received: {', '.join(author_data.keys())}")
+    except ValidationError as ve:
+        db.session.rollback()
+        abort(400, f" Ошибка валидации {str(ve)}")    
     except Exception as e:
+        db.session.rollback()
         abort(503, f"Database error: {str(e)}")
-    return jsonify(author.to_dict()), 201
+    return jsonify(author_schema.dump(author)), 201
 
 @app.route("/authors/<int:author_id>", methods=['DELETE'])
 def delete_author(author_id):
@@ -33,13 +37,13 @@ def delete_author(author_id):
 @app.put("/authors/<int:author_id>")
 def edit_authors(author_id: int):
     """ Изменение имени автора по id """
-    new_data = request.json
-    print(new_data)
-    #result = check(new_data, check_rating=True)
-    #if not result[0]:
-    #    return abort(400, result[1].get('error'))
+    try: 
+        new_data = edit_author_schema.load(request.json, unknown = EXCLUDE)
+        print(new_data)
     
-    author = db.get_or_404(entity=AuthorModel, ident=author_id, description=f"Authors with id={author_id} not found")
+        author = db.get_or_404(entity=AuthorModel, ident=author_id, description=f"Authors with id={author_id} not found")
+    except ValidationError as ve:
+        return abort (400,f" Ошибка проверки  {str(ve)}")
 
     try:
         for key_as_attr, value in new_data.items():
@@ -67,15 +71,16 @@ def delete_qauthors(author_id):
 def get_author_by_id(author_id: int):
     """ Вывод автора по его id."""
     author = db.get_or_404(entity=AuthorModel, ident=author_id, description=f"Author with id={author_id} not found")
-    return jsonify(author.to_dict()), 200 
+    # return jsonify(author.to_dict()), 200 
+    return author_schema.dump(author), 200    
 
 @app.get("/authors")
 def get_authors():
     """ Функция возвращает всех авторов из БД. """
     authors_db = db.session.scalars(db.select(AuthorModel)).all()
-    # Формируем список словарей
-    # authors = []
-    # for author in authors_db:
-    #     authors.append(author.to_dict())
-    # return jsonify(authors), 200  
-    return authors_schema.dump(authors_db), 200     
+
+    # чтобы использовать разные схемы для одного и множества  
+    #return authors_schema.dump(authors_db), 200  
+
+    # чтобы использовать одну схемy  необходимо для множественного добавить many=True
+    return author_schema.dump(authors_db, many=True), 200  
