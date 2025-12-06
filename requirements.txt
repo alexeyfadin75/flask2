@@ -8,6 +8,7 @@ click==8.3.1
 curtsies==0.4.3
 cwcwidth==0.1.12
 Flask==3.1.2
+flask-marshmallow==1.3.0
 Flask-Migrate==4.1.0
 flask-moreshell==0.1.5
 Flask-SQLAlchemy==3.1.1
@@ -17,6 +18,8 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 Mako==1.3.10
 MarkupSafe==3.0.3
+marshmallow==4.1.0
+marshmallow-sqlalchemy==1.4.2
 Pygments==2.19.2
 python-dotenv==1.2.1
 pyxdg==0.28

@@ -1,6 +1,7 @@
 from api import app, db
 from flask import request, abort, jsonify
 from api.models.author import AuthorModel
+from api.schemas.author import author_schema, authors_schema
 
 @app.post("/authors")
 def create_author():
@@ -73,7 +74,8 @@ def get_authors():
     """ Функция возвращает всех авторов из БД. """
     authors_db = db.session.scalars(db.select(AuthorModel)).all()
     # Формируем список словарей
-    authors = []
-    for author in authors_db:
-        authors.append(author.to_dict())
-    return jsonify(authors), 200       
+    # authors = []
+    # for author in authors_db:
+    #     authors.append(author.to_dict())
+    # return jsonify(authors), 200  
+    return authors_schema.dump(authors_db), 200     
