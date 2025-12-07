@@ -6,7 +6,7 @@ from api.models.quote import QuoteModel
 from api.models.author import AuthorModel
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError, InvalidRequestError
-from . import check
+#from . import check
 from api.schemas.quote import quotes_schema, quote_schema, edit_quotes_schema_non_rating, edit_quotes_schema
 
 @app.get("/quotes")
