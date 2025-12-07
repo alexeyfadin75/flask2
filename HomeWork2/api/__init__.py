@@ -23,4 +23,4 @@ ma.init_app(app)
 # добавить импорт для обработчиков author & quites
 
 from api.handlers import author
-from api.handlers import qoute
+from api.handlers import quote
