@@ -20,7 +20,8 @@ migrate = Migrate(app, db)
 ma = Marshmallow()
 ma.init_app(app)
 
-# добавить импорт для обработчиков author & quites
+# добавить импорт для обработчиков author & quites & users
 
 from api.handlers import author
 from api.handlers import quote
+from api.handlers import user
