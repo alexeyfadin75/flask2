@@ -67,7 +67,7 @@ def delete_qauthors(author_id):
         db.session.rollback()
         abort(503, f"Database error: {str(e)}")        
 
-@app.get("/authors//<int:author_id>")
+@app.get("/authors/<int:author_id>")
 def get_author_by_id(author_id: int):
     """ Вывод автора по его id."""
     author = db.get_or_404(entity=AuthorModel, ident=author_id, description=f"Author with id={author_id} not found")

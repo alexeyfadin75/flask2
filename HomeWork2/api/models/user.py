@@ -1,7 +1,9 @@
+from flask import abort
 from passlib.apps import custom_app_context as pwd_context
 from sqlalchemy import orm as so
 from api import db
 import sqlalchemy as sa
+from sqlalchemy.exc import SQLAlchemyError
 
 class UserModel(db.Model):
     __tablename__="users"
@@ -19,3 +21,19 @@ def hash_password(self, password):
 
 def verify_password(self, password):
     return pwd_context.verify(password, self.password_hash)
+
+def save(self):
+    try:
+        db.session.add(self)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        abort(503, f"Database error: {str(e)}")  
+
+def delete (self):
+    try:
+        db.session.delete(self)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        abort(503, f"Database error: {str(e)}")          
